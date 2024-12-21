@@ -3,6 +3,7 @@ from .models import User
 from argon2 import PasswordHasher
 from . import db
 from flask_login import login_user, login_required, logout_user, current_user
+from argon2.exceptions import VerifyMismatchError
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -16,6 +17,8 @@ def login():
 
     user = User.query.filter_by(email = email).first()
     if user:
+      try:
+        # verify password
         if ph.verify(user.password, password):
           flash('Logged in successfully!', category='success')
           login_user(user, remember=True)
@@ -23,14 +26,20 @@ def login():
         else:
           flash('Incorrect password, try again.', category='error')
           return redirect('/login')
+        # handle password error
+      except VerifyMismatchError:
+        flash('Incorrect password, try again.', category='error')
+        return render_template('login.html')
     else:
       flash('Email does not exist.', category='error')
 
-  return render_template('login.html')
+  return render_template('login.html', user = current_user)
 
 @auth_bp.route('/logout')
+@login_required
 def logout():
-  return '<h1>Logout<h1>'
+  logout_user()
+  return redirect('/login')
 
 @auth_bp.route('/sign-up', methods = ['GET', 'POST'])
 def sign_up():
@@ -57,9 +66,10 @@ def sign_up():
       new_user = User(email=email, firstName=firstName, password=hashed_password)
       db.session.add(new_user)
       db.session.commit()
+      login_user(user, remember = True)
       flash('Account successfully created!')
       return redirect('/')
-  return render_template('sign_up.html')
+  return render_template('sign_up.html', user = current_user)
 
 
 
