@@ -49,7 +49,7 @@ This is a Flask-based web application that implements essential features such as
    - Initialize the database by running the following commands in a Python shell:
      ```python
      from app import db
-    with app.app_context():
+     with app.app_context():
       db.create_all()
      ```
 
@@ -68,7 +68,7 @@ The project was inspired by the need to understand and implement essential web d
 
 Developing this project provided practical experience in building secure authentication systems and integrating databases, skills that are fundamental in modern web application development.
 
-## Future Improvements
+## Improvements underway...
 - **Role-Based Access Control**: Implement admin and user roles.
 - **Password Reset**: Add functionality to reset forgotten passwords.
 - **Enhanced Security**: Include features like account lockout after multiple failed login attempts.
