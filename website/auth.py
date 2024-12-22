@@ -29,7 +29,7 @@ def login():
         # handle password error
       except VerifyMismatchError:
         flash('Incorrect password, try again.', category='error')
-        return render_template('login.html')
+        return render_template('login.html', user = current_user)
     else:
       flash('Email does not exist.', category='error')
 
@@ -66,7 +66,7 @@ def sign_up():
       new_user = User(email=email, firstName=firstName, password=hashed_password)
       db.session.add(new_user)
       db.session.commit()
-      login_user(user, remember = True)
+      login_user(new_user, remember = True)
       flash('Account successfully created!')
       return redirect('/')
   return render_template('sign_up.html', user = current_user)
